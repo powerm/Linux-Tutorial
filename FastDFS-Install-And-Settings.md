@@ -66,8 +66,8 @@
     connect_timeout=30
     network_timeout=60
     # 下面这个路径是保存 store data 和 log 的地方，需要我们改下，指向我们一个存在的目录
-    # 创建目录：mkdir -p /opt/fastdfs/tracker/data-and-log
-    base_path=/opt/fastdfs/tracker/data-and-log
+    # 创建目录：mkdir -p /data/fastdfs/tracker/data-and-log
+    base_path=/data/fastdfs/tracker/data-and-log
     max_connections=256
     accept_threads=1
     work_threads=4
@@ -108,14 +108,20 @@
     log_file_keep_days = 0
     use_connection_pool = false
     connection_pool_max_idle_time = 3600
-    http.server_port=8080
+    http.server_port=6666
     http.check_alive_interval=30
     http.check_alive_type=tcp
     http.check_alive_uri=/status.html
     ```
-    - 启动 tracker 服务：`/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf`
+    - 为启动脚本创建软连接
+    `ln -s /usr/bin/fdfs_trackerd /usr/local/bin`
+    `ln -s /usr/bin/stop.sh /usr/local/bin`
+    `ln -s /usr/bin/restart.sh /usr/local/bin`
+    - 启动 tracker 服务：`/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf`
     - 重启 tracker 服务：`/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf restart`
-    - 查看是否有 tracker 进程：`ps aux | grep tracker`
+    - 或者通过service启动traker服务：`service fdfs_trackerd start`
+    - 查看是否有 tracker 进程：`ps aux | grep tracker` 
+    - 或者 通过netstat命令查看一下端口监听情况 `netstat -unltp|grep fdfs`
 - storage （存储节点）服务部署
     - 一般 storage 服务我们会单独装一台机子，但是这里为了方便我们安装在同一台。
     - 如果 storage 单独安装的话，那上面安装的步骤都要在走一遍，只是到了编辑配置文件的时候，编辑的是 storage.conf 而已
@@ -132,8 +138,8 @@
     heart_beat_interval=30
     stat_report_interval=60
     # 下面这个路径是保存 store data 和 log 的地方，需要我们改下，指向我们一个存在的目录
-    # 创建目录：mkdir -p /opt/fastdfs/storage/data-and-log
-    base_path=/opt/fastdfs/storage/data-and-log
+    # 创建目录：mkdir -p /data/fastdfs/storage/data-and-log
+    base_path=/data/fastdfs/storage/data-and-log
     max_connections=256
     buff_size = 256KB
     accept_threads=1
@@ -151,11 +157,11 @@
     # store_path0=/opt/fastdfs/storage/images-data0
     # store_path1=/opt/fastdfs/storage/images-data1
     # store_path2=/opt/fastdfs/storage/images-data2
-    # 创建目录：mkdir -p /opt/fastdfs/storage/images-data
-    store_path0=/opt/fastdfs/storage/images-data
+    # 创建目录：mkdir -p /data/fastdfs/storage/images-data 或者 软链接到一个数据盘目录  ln -s /mnt/disk1/fastdfs/storage/images-data /data/fastdfs/storage/images-data
+    store_path0=/data/fastdfs/storage/images-data
     subdir_count_per_path=256
     # 指定 tracker 服务器的 IP 和端口
-    tracker_server=192.168.1.114:22122
+    tracker_server=192.168.1.56:22122
     log_level=info
     run_by_group=
     run_by_user=
@@ -188,8 +194,10 @@
     http.server_port=8888
     ```
     - 启动 storage 服务：`/usr/bin/fdfs_storaged /etc/fdfs/storage.conf`，首次启动会很慢，因为它在创建预设存储文件的目录
-    - 重启 storage 服务：`/usr/bin/fdfs_storaged /etc/fdfs/storage.conf restart`
+    - 或者为Storage服务器的启动脚本设置软引用:`ln -s /usr/bin/fdfs_storaged /usr/local/bin` 然后启动`service fdfs_storaged start`
+    - 重启 storage 服务：`/usr/bin/fdfs_storaged /etc/fdfs/storage.conf restart`
     - 查看是否有 storage 进程：`ps aux | grep storage`
+    - 或者 通过netstat命令查看一下端口监听情况 `netstat -unltp|grep fdfs`
 - 测试是否部署成功
     - 利用自带的 client 进行测试
     - 复制一份配置文件：`cp /etc/fdfs/client.conf.sample /etc/fdfs/client.conf`
@@ -198,10 +206,10 @@
     connect_timeout=30
     network_timeout=60
     # 下面这个路径是保存 store log 的地方，需要我们改下，指向我们一个存在的目录
-    # 创建目录：mkdir -p /opt/fastdfs/client/data-and-log
-    base_path=/opt/fastdfs/client/data-and-log
+    # 创建目录：mkdir -p /data/fastdfs/client/data-and-log
+    base_path=/data/fastdfs/client/data-and-log
     # 指定 tracker 服务器的 IP 和端口
-    tracker_server=192.168.1.114:22122
+    tracker_server=192.168.1.56:22122
     log_level=info
     use_connection_pool = false
     connection_pool_max_idle_time = 3600
