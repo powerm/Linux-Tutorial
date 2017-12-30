@@ -113,15 +113,14 @@
     http.check_alive_type=tcp
     http.check_alive_uri=/status.html
     ```
-    - 为启动脚本创建软连接
-    `ln -s /usr/bin/fdfs_trackerd /usr/local/bin`
-    `ln -s /usr/bin/stop.sh /usr/local/bin`
-    `ln -s /usr/bin/restart.sh /usr/local/bin`
     - 启动 tracker 服务：`/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf`
     - 重启 tracker 服务：`/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf restart`
+    - 为启动脚本创建软连接：`ln -s /usr/bin/fdfs_trackerd /usr/local/bin`
+    - 为启动脚本创建软连接：`ln -s /usr/bin/stop.sh /usr/local/bin`
+    - 为启动脚本创建软连接：`ln -s /usr/bin/restart.sh /usr/local/bin`
     - 或者通过service启动traker服务：`service fdfs_trackerd start`
     - 查看是否有 tracker 进程：`ps aux | grep tracker` 
-    - 或者 通过netstat命令查看一下端口监听情况 `netstat -unltp|grep fdfs`
+    - 或者 通过netstat命令查看一下端口监听情况 ：`netstat -unltp|grep fdfs`
 - storage （存储节点）服务部署
     - 一般 storage 服务我们会单独装一台机子，但是这里为了方便我们安装在同一台。
     - 如果 storage 单独安装的话，那上面安装的步骤都要在走一遍，只是到了编辑配置文件的时候，编辑的是 storage.conf 而已
